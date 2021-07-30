@@ -27,21 +27,17 @@ class TeacherCoursesController extends AppController
         $teacherCourses = $this->paginate($this->TeacherCourses);
 
         $query = $this->TeacherCourses->find();
-        $totalStudents = $query->select(['total_students' => $query->func()->count('StudentTeacherCourses.student_id')])
+        $totalStudents = $query->select(['total_students' => $query->func()
+            ->count('StudentTeacherCourses.student_id')])
             ->leftJoinWith('StudentTeacherCourses')
             ->group(['StudentTeacherCourses.teacher_course_id'])
             ->enableAutoFields(true)
             ->toArray();
-        //pr($totalStudents);
+
         $finalResult = Hash::combine($totalStudents, '{n}.course_id', '{n}.total_students');
-//        $finalResult[$classID];
+
         $this->set(compact('teacherCourses', 'finalResult'));
 
-//        $query = $articlesTable->find();
-//$query->select(['total_comments' => $query->func()->count('Comments.id')])
-//    ->leftJoinWith('Comments')
-//    ->group(['Articles.id'])
-//    ->enableAutoFields(true); // Prior to 3.4.0 use autoFields(true);
     }
 
     /**
