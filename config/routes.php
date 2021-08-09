@@ -80,11 +80,17 @@ $routes->scope('/', function (RouteBuilder $builder) {
  * ```
  * $routes->scope('/api', function (RouteBuilder $builder) {
  *     // No $builder->applyMiddleware() here.
- *     
+ *
  *     // Parse specified extensions from URLs
  *     // $builder->setExtensions(['json', 'xml']);
- *     
+ *
  *     // Connect API actions here.
  * });
  * ```
  */
+
+$routes->prefix('api', function (RouteBuilder $routes) {
+    // All routes here will be prefixed with `/api`
+    // And have the prefix => api route element added.
+    $routes->fallbacks(DashedRoute::class);
+});

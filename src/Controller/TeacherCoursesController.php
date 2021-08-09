@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\Utility\Hash;
-
 /**
  * TeacherCourses Controller
  *
@@ -25,18 +23,18 @@ class TeacherCoursesController extends AppController
             'contain' => ['Courses', 'Teachers'],
         ];
         $teacherCourses = $this->paginate($this->TeacherCourses);
+        // dd($teacherCourses);
+//        $query = $this->TeacherCourses->find();
+//        $totalStudents = $query->select(['total_students' => $query->func()
+//            ->count('StudentTeacherCourses.student_id')])
+//            ->leftJoinWith('StudentTeacherCourses')
+//            ->group(['StudentTeacherCourses.teacher_course_id'])
+//            ->enableAutoFields(true)
+//            ->toArray();
 
-        $query = $this->TeacherCourses->find();
-        $totalStudents = $query->select(['total_students' => $query->func()
-            ->count('StudentTeacherCourses.student_id')])
-            ->leftJoinWith('StudentTeacherCourses')
-            ->group(['StudentTeacherCourses.teacher_course_id'])
-            ->enableAutoFields(true)
-            ->toArray();
+        //$finalResult = Hash::combine($totalStudents, '{n}.course_id', '{n}.total_students');
 
-        $finalResult = Hash::combine($totalStudents, '{n}.course_id', '{n}.total_students');
-
-        $this->set(compact('teacherCourses', 'finalResult'));
+        $this->set(compact('teacherCourses'));
 
     }
 
@@ -49,10 +47,11 @@ class TeacherCoursesController extends AppController
      */
     public function view($id = null)
     {
+        $this->loadModel('TeacherCourses');
+
         $teacherCourse = $this->TeacherCourses->get($id, [
             'contain' => ['Courses', 'Teachers', 'StudentTeacherCourses'],
         ]);
-
         $this->set(compact('teacherCourse'));
     }
 

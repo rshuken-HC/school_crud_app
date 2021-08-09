@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\Student;
+use Cake\I18n\Date;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -56,9 +58,36 @@ class TeacherCoursesTable extends Table
         ]);
         $this->hasOne('TeacherAssistants', [
             'foreignKey' => 'teacher_assistant_id',
-         ]);
+        ]);
     }
 
+    public function findTotalCredits(Query $query, $options)
+    {
+        return $query
+            ->formatResults(function ($results, $query) {
+                return $results->map(function ($row) use ($query) {
+                    $row->total_credits = $this->getTotalCredits($row);
+                    $row->total_credits_current = $this->getTotalCredits($row, true);
+                    return $row;
+                });
+            });
+    }
+
+    public function getTotalCredits(Student $student, $current = false): int
+    {
+        $q = $this->StudentTeacherCourses->find()
+            ->where(['student_id' => $student->id])
+            ->contain(['TeacherCourses', 'TeacherCourses.Courses'])
+            ->select(['credits_sum' => 'SUM(Courses.credits)']);
+        if ($current) {
+            $q->where([
+                'TeacherCourses.start_date <=' => new Date(),
+                'TeacherCourses.end_date >=' => new Date(),
+            ]);
+        }
+        $res = $q->first();
+        return (int)$res->credits_sum;
+    }
 
     /**
      * Default validation rules.

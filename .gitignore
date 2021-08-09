@@ -5,6 +5,7 @@
 /logs/*
 /tmp/*
 /vendor/*
+/node_modules/*
 
 # OS generated files #
 ######################
@@ -41,3 +42,10 @@ nbproject/*
 .vscode
 # Sass preprocessor
 .sass-cache/
+
+#VueJS files
+/school_app_vue/node_modules
+
+#personal tracking files
+remmberal.md
+tickets.md

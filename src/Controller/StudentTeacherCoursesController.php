@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use phpDocumentor\Reflection\Types\Integer;
+
 /**
  * StudentTeacherCourses Controller
  *
@@ -36,6 +38,8 @@ class StudentTeacherCoursesController extends AppController
      */
     public function view($id = null)
     {
+        $this->loadModel('StudentTeacherCourses');
+
         $studentTeacherCourse = $this->StudentTeacherCourses->get($id, [
             'contain' => ['TeacherCourses', 'Students'],
         ]);

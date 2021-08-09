@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Event\EventInterface;
 
 /**
  * Application Controller
@@ -49,5 +50,16 @@ class AppController extends Controller
          * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
          */
         //$this->loadComponent('FormProtection');
+    }
+
+    public function beforeFilter(EventInterface $event)
+    {
+        $this->response = $this->response->withHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
+        $this->response = $this->response->withHeader('Access-Control-Allow-Methods', '*');
+        $this->response = $this->response->withHeader('Access-Control-Allow-Headers', '*');
+        if ($this->request->is('options')) {
+            return $this->response->withStatus(200);
+        }
+
     }
 }

@@ -73,7 +73,7 @@ class StudentsController extends AppController
         $student = $this->Students->get($id, [
             'contain' => [],
         ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
+        if ($this->request->is(['patch','put'])) {
             $student = $this->Students->patchEntity($student, $this->request->getData());
             if ($this->Students->save($student)) {
                 $this->Flash->success(__('The student has been saved.'));
