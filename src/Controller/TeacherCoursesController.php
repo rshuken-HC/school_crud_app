@@ -23,16 +23,16 @@ class TeacherCoursesController extends AppController
             'contain' => ['Courses', 'Teachers'],
         ];
         $teacherCourses = $this->paginate($this->TeacherCourses);
-        // dd($teacherCourses);
+        //dd($teacherCourses);
 //        $query = $this->TeacherCourses->find();
 //        $totalStudents = $query->select(['total_students' => $query->func()
 //            ->count('StudentTeacherCourses.student_id')])
 //            ->leftJoinWith('StudentTeacherCourses')
 //            ->group(['StudentTeacherCourses.teacher_course_id'])
-//            ->enableAutoFields(true)
+//            ->enableAutoFields(false)
 //            ->toArray();
-
-        //$finalResult = Hash::combine($totalStudents, '{n}.course_id', '{n}.total_students');
+//
+//        $finalResult = Hash::combine($totalStudents, '{n}.course_id', '{n}.total_students');
 
         $this->set(compact('teacherCourses'));
 

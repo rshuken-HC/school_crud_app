@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Controller\AppController;
-use Cake\Utility\Hash;
 
 /**
  * TeacherCourses Controller
@@ -22,30 +21,30 @@ class TeacherCoursesController extends AppController
     public function index()
     {
         $this->loadModel('TeacherCourses');
-        $this->paginate = [
-            'contain' => ['Courses', 'Teachers'],
-        ];
-        $teacherCourses = $this->paginate($this->TeacherCourses)->toArray();
-
-        $query = $this->TeacherCourses->find();
-        $totalStudents = $query->select(['total_students' => $query->func()
-            ->count('StudentTeacherCourses.student_id')])
-            ->leftJoinWith('StudentTeacherCourses')
-            ->group(['StudentTeacherCourses.teacher_course_id'])
-            ->enableAutoFields(true)
+        $this->paginate = [];
+        $teacherCourses = $this->paginate($this->TeacherCourses->find('associations')->find('totalStudents'))
             ->toArray();
 
-        $finalResult = Hash::combine($totalStudents, '{n}.id', '{n}.total_students');
+//        $query = $this->TeacherCourses->find();
+//        $totalStudents = $query->select(['total_students' => $query->func()
+//            ->count('StudentTeacherCourses.student_id')])
+//            ->leftJoinWith('StudentTeacherCourses')
+//            ->group(['StudentTeacherCourses.teacher_course_id'])
+//            ->enableAutoFields(false)
+//            ->toArray();
+//
+//        $finalResult = Hash::combine($totalStudents, '{n}.id', '{n}.total_students');
 
 
         return $this->response
             ->withType('application/json')
             ->withStatus(200)
-            ->withStringBody(json_encode(['teacherCourses' => $teacherCourses,'totalStudents' => $finalResult ],1));
+            ->withStringBody(json_encode(['teacherCourses' => $teacherCourses], 1));
 
         //$this->set(compact('teacherCourses', 'finalResult'));
 
     }
+
 
     /**
      * View method
@@ -56,6 +55,9 @@ class TeacherCoursesController extends AppController
      */
     public function view($id = null)
     {
+        $teacherCourse = $this->TeacherCourses->find()->find('associations')->contain('StudentTeacherCourses')->where(['TeacherCourses.id' => $id])
+            ->firstOrFail();
+        $r = $this->TeacherCourses->get($id);
         $teacherCourse = $this->TeacherCourses->get($id, [
             'contain' => ['Courses', 'Teachers', 'StudentTeacherCourses'],
         ]);
@@ -63,7 +65,7 @@ class TeacherCoursesController extends AppController
         return $this->response
             ->withType('application/json')
             ->withStatus(200)
-            ->withStringBody(json_encode($teacherCourse,1));
+            ->withStringBody(json_encode($teacherCourse, 1));
 
         //$this->set(compact('teacherCourse'));
     }
@@ -98,7 +100,7 @@ class TeacherCoursesController extends AppController
                     'teachers' => $teachers,
                     'teacherCourse' => $teacherCourse,
                     'courses' => $courses
-                ],1));
+                ], 1));
 
         //$this->set(compact('teacherCourse', 'courses', 'teachers'));
     }
@@ -137,7 +139,7 @@ class TeacherCoursesController extends AppController
                     'teachers' => $teachers,
                     'teacherCourse' => $teacherCourse,
                     'courses' => $courses
-                ],1));
+                ], 1));
 
         //$this->set(compact('teacherCourse', 'courses', 'teachers'));
     }

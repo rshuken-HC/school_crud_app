@@ -89,6 +89,32 @@ class TeacherCoursesTable extends Table
         return (int)$res->credits_sum;
     }
 
+
+    public function findTotalStudents(Query $query, $options)
+    {
+        return $query
+            ->formatResults(function ($results) {
+                return $results->map(function ($result) {
+                    $result->total_students = $this->StudentTeacherCourses->find()->where(['teacher_course_id' =>
+                        $result->id])->count();
+                    $result->all_my_contacts = "Email: " . $result->email . " Tel: " . $result->phone;
+
+
+                    return $result;
+                });
+            });
+    }
+
+    public function findAssociations(Query $query, $options)
+    {
+        return $query->contain([
+            'Courses' => function ($q) {
+                return $q->select(['id', 'title']);
+            },
+            'Teachers',
+        ]);
+    }
+
     /**
      * Default validation rules.
      *
